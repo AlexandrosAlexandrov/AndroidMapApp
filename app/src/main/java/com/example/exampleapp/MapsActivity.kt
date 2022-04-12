@@ -43,13 +43,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
      binding = ActivityMapsBinding.inflate(layoutInflater)
      setContentView(binding.root)
 
+        // Construct a PlacesClient
+        Places.initialize(applicationContext, getString(R.string.maps_api_key))
+        placesClient = Places.createClient(this)
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Construct a FusedLocationProviderClient.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
     }
+
 
 
     override fun onMapReady(googleMap: GoogleMap) {
