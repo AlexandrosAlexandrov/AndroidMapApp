@@ -3,10 +3,13 @@ package com.example.exampleapp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -22,7 +25,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.Marker
 import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.gson.GsonBuilder
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -30,6 +36,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var lastLocation : Location
     private lateinit var fusedLocationClient : FusedLocationProviderClient
 
+
+    private lateinit var context : Context
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
@@ -43,19 +51,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
      binding = ActivityMapsBinding.inflate(layoutInflater)
      setContentView(binding.root)
 
-        // Construct a PlacesClient
-        Places.initialize(applicationContext, getString(R.string.maps_api_key))
-        placesClient = Places.createClient(this)
-
+        context = this@MapsActivity
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Construct a PlacesClient
+        Places.initialize(applicationContext, getString(R.string.maps_api_key))
+        placesClient = Places.createClient(this)
+        Places.initialize(applicationContext,"AIzaSyBoz9zCO7pSPGRje1--O9jRUn3z68Mkjhw")
+
         // Construct a FusedLocationProviderClient.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-    }
 
+        val placeFields: List<Place.Field> = listOf(Place.Field.NAME)
+
+        // Use the builder to create a FindCurrentPlaceRequest.
+        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
+
+
+    }
 
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -64,6 +80,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.setOnMarkerClickListener(this)
         setUpMap()
+
+    }
+
+    private inner class HitApi(
+        context: Context,
+        lat: Double,
+        lng: Double,
+        radius: Int,
+        type: String
+    ) : AsyncTask<Void, Void, String>() {
+        var context: Context? = context
+        var lat: Double? = lat
+        var lng: Double? = lng
+        var radius: Int? = radius
+        var type: String? = type
+
+        override fun doInBackground(vararg p0: Void?): String {
+            return PlacesAPI().getPlaces(context as Context, lat as Double, lng as Double, radius as Int, type as String)
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            val gson = GsonBuilder().create()
+
+        }
 
     }
 
