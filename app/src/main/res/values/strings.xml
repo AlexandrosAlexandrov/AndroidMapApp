@@ -3,4 +3,7 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="maps_api_key">AIzaSyBoz9zCO7pSPGRje1--O9jRUn3z68Mkjhw</string>
     <string name="pick_place">pick a place</string>
+    <string name="get_place">Get Place</string>
+    <string name="default_info_title">Info Title</string>
+    <string name="default_info_snippet">Info Snippet</string>
 </resources>
