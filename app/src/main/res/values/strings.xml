@@ -6,4 +6,6 @@
     <string name="get_place">Get Place</string>
     <string name="default_info_title">Info Title</string>
     <string name="default_info_snippet">Info Snippet</string>
+    <string name="title">TITLE</string>
+    <string name="snippet">SNIPPET</string>
 </resources>
