@@ -2,4 +2,5 @@
     <string name="app_name">ExampleApp</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="maps_api_key">AIzaSyBoz9zCO7pSPGRje1--O9jRUn3z68Mkjhw</string>
+    <string name="pick_place">pick a place</string>
 </resources>
