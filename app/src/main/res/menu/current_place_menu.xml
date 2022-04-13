@@ -3,5 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/option_get_place"
-        android:title="@string/get_place" />
+        android:title="@string/get_place"
+        android:visible="true" />
 </menu>
