@@ -8,4 +8,5 @@
     <string name="default_info_snippet">Info Snippet</string>
     <string name="title">TITLE</string>
     <string name="snippet">SNIPPET</string>
+    <string name="place_information">Place Information</string>
 </resources>

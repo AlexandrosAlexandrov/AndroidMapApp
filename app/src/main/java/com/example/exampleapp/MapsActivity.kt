@@ -35,7 +35,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.gson.GsonBuilder
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private var cameraPosition: CameraPosition? = null
 
@@ -471,6 +471,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             i++
         }
     }
+
+
 
 
 }
