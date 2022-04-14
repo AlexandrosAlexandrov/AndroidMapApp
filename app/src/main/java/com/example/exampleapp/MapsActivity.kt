@@ -70,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val KEY_LOCATION = "location"
 
         // Used for selecting the current place.
-        private const val M_MAX_ENTRIES = 5
+        private const val M_MAX_ENTRIES = 11
 
         const val LOCATION_REQUEST_CODE = 1
     }
@@ -137,7 +137,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.option_get_place) {
-            showCurrentPlace()
+            openPlacesDialog()
         }
         return true
     }
@@ -171,8 +171,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
 
-        setUpMap()
+        // Prompt the user for permission.
+        getLocationPermission()
 
+        // Turn on the My Location layer and the related control on the map.
+        updateLocationUI()
+
+        // Get the current location of the device and set the position of the map.
+        getDeviceLocation()
+
+        showCurrentPlace()
 
     }
 
@@ -312,7 +320,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 */
-    @SuppressLint("MissingPermission")
+ /**   @SuppressLint("MissingPermission")
     private fun setUpMap() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.isMyLocationEnabled = true
@@ -338,7 +346,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.addMarker(markerOptions)
     }
 
-
+*/
 
 
 
@@ -391,7 +399,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                     // Show a dialog offering the user the list of likely places, and add a
                     // marker at the selected place.
-                    openPlacesDialog()
+                    //openPlacesDialog()
+                    showAllPlaces()
                 } else {
                     Log.e(TAG, "Exception: %s", task.exception)
                 }
@@ -444,6 +453,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .setTitle(R.string.pick_place)
             .setItems(likelyPlaceNames, listener)
             .show()
+    }
+
+
+    //Show all nearby places on map
+    private fun showAllPlaces() {
+        var i = 0
+        while (i < M_MAX_ENTRIES){
+            val markerLatLng = likelyPlaceLatLngs[i]
+            val markerSnippet = likelyPlaceAddresses[i]
+
+            mMap?.addMarker(MarkerOptions()
+                .title(likelyPlaceNames[i])
+                .position(markerLatLng!!)
+                .snippet(markerSnippet)
+            )
+            i++
+        }
     }
 
 
