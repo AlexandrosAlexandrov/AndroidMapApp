@@ -2,13 +2,11 @@ package com.example.exampleapp
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,10 +15,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,14 +29,14 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.gson.GsonBuilder
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
+
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var cameraPosition: CameraPosition? = null
 
     private lateinit var placesClient: PlacesClient
-    private  var lastLocation : Location? = null
+    private var lastLocation: Location? = null
 
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
@@ -48,7 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     private var likelyPlaceAddresses: Array<String?> = arrayOfNulls(0)
     private var likelyPlaceAttributions: Array<List<*>?> = arrayOfNulls(0)
     private var likelyPlaceLatLngs: Array<LatLng?> = arrayOfNulls(0)
-    private lateinit var fusedLocationClient : FusedLocationProviderClient
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
@@ -56,7 +52,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     private var locationPermissionGranted = false
 
 
-    private lateinit var context : Context
+    private lateinit var context: Context
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
@@ -72,7 +68,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         // Used for selecting the current place.
         private const val M_MAX_ENTRIES = 11
 
-        const val LOCATION_REQUEST_CODE = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,13 +79,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
         }
 
-     binding = ActivityMapsBinding.inflate(layoutInflater)
-     setContentView(binding.root)
+        binding = ActivityMapsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         context = this@MapsActivity
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
+            .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         // Construct a PlacesClient
@@ -100,12 +95,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         // Construct a FusedLocationProviderClient.
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val placeFields: List<Place.Field> = listOf(Place.Field.NAME)
-
-        // Use the builder to create a FindCurrentPlaceRequest.
-        val request: FindCurrentPlaceRequest = FindCurrentPlaceRequest.newInstance(placeFields)
-
-
     }
 
 
@@ -113,7 +102,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
      * Saves the state of the map when the activity is paused.
      */
     override fun onSaveInstanceState(outState: Bundle) {
-        mMap?.let { map ->
+        mMap.let { map ->
             outState.putParcelable(KEY_CAMERA_POSITION, map.cameraPosition)
             outState.putParcelable(KEY_LOCATION, lastLocation)
         }
@@ -151,7 +140,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
-        this.mMap?.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+        this.mMap.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
             // Return null here, so that getInfoContents() is called next.
             override fun getInfoWindow(arg0: Marker): View? {
                 return null
@@ -185,7 +174,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     }
 
 
-
     /**
      * Gets the current location of the device, and positions the map's camera.
      */
@@ -203,16 +191,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
                         // Set the map's camera position to the current location of the device.
                         lastLocation = task.result
                         if (lastLocation != null) {
-                            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                LatLng(lastLocation!!.latitude,
-                                    lastLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                            mMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(
+                                        lastLocation!!.latitude,
+                                        lastLocation!!.longitude
+                                    ), DEFAULT_ZOOM.toFloat()
+                                )
+                            )
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.")
                         Log.e(TAG, "Exception: %s", task.exception)
-                        mMap?.moveCamera(CameraUpdateFactory
-                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
-                        mMap?.uiSettings?.isMyLocationButtonEnabled = false
+                        mMap.moveCamera(
+                            CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
+                        )
+                        mMap.uiSettings.isMyLocationButtonEnabled = false
                     }
                 }
             }
@@ -230,29 +225,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
-        if (ContextCompat.checkSelfPermission(this.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             locationPermissionGranted = true
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
         }
     }
 
     /**
      * Handles the result of the request for location permissions.
      */
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         locationPermissionGranted = false
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
                     locationPermissionGranted = true
                 }
             }
@@ -267,16 +270,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
      */
     @SuppressLint("MissingPermission")
     private fun updateLocationUI() {
-        if (mMap == null) {
-            return
-        }
         try {
             if (locationPermissionGranted) {
-                mMap?.isMyLocationEnabled = true
-                mMap?.uiSettings?.isMyLocationButtonEnabled = true
+                mMap.isMyLocationEnabled = true
+                mMap.uiSettings.isMyLocationButtonEnabled = true
             } else {
-                mMap?.isMyLocationEnabled = false
-                mMap?.uiSettings?.isMyLocationButtonEnabled = false
+                mMap.isMyLocationEnabled = false
+                mMap.uiSettings.isMyLocationButtonEnabled = false
                 lastLocation = null
                 getLocationPermission()
             }
@@ -285,71 +285,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
         }
     }
 
-    /**
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-
-        mMap.uiSettings.isZoomControlsEnabled = true
-        mMap.setOnMarkerClickListener(this)
-        setUpMap()
-*/
-
-/**
-    private inner class HitApi(
-        context: Context,
-        lat: Double,
-        lng: Double,
-        radius: Int,
-        type: String
-    ) : AsyncTask<Void, Void, String>() {
-        var context: Context? = context
-        var lat: Double? = lat
-        var lng: Double? = lng
-        var radius: Int? = radius
-        var type: String? = type
-
-        override fun doInBackground(vararg p0: Void?): String {
-            return PlacesAPI().getPlaces(context as Context, lat as Double, lng as Double, radius as Int, type as String)
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            val gson = GsonBuilder().create()
-
-        }
-
-    }
-*/
- /**   @SuppressLint("MissingPermission")
-    private fun setUpMap() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.isMyLocationEnabled = true
-            fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
-
-                if(location != null){
-                    lastLocation = location
-                    val currentLatLong = LatLng(location.latitude, location.longitude)
-                    placeMarkerOnMap(currentLatLong)
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 12f))
-                }
-            }
-        }
-        else {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
-        }
-    }
-
-
-    private fun placeMarkerOnMap(currentLatLong : LatLng) {
-        val markerOptions = MarkerOptions().position(currentLatLong)
-        MarkerOptions().title("$currentLatLong")
-        mMap.addMarker(markerOptions)
-    }
-
-*/
-
-
-
 
     /**
      * Prompts the user to select the current place from a list of likely places, and shows the
@@ -357,9 +292,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
      */
     @SuppressLint("MissingPermission")
     private fun showCurrentPlace() {
-        if (mMap == null) {
-            return
-        }
         if (locationPermissionGranted) {
             // Use fields to define the data types to return.
             val placeFields = listOf(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
@@ -375,11 +307,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
                     val likelyPlaces = task.result
 
                     // Set the count, handling cases where less than 5 entries are returned.
-                    val count = if (likelyPlaces != null && likelyPlaces.placeLikelihoods.size < M_MAX_ENTRIES) {
-                        likelyPlaces.placeLikelihoods.size
-                    } else {
-                        M_MAX_ENTRIES
-                    }
+                    val count =
+                        if (likelyPlaces != null && likelyPlaces.placeLikelihoods.size < M_MAX_ENTRIES) {
+                            likelyPlaces.placeLikelihoods.size
+                        } else {
+                            M_MAX_ENTRIES
+                        }
                     var i = 0
                     likelyPlaceNames = arrayOfNulls(count)
                     likelyPlaceAddresses = arrayOfNulls(count)
@@ -410,10 +343,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
             Log.i(TAG, "The user did not grant location permission.")
 
             // Add a default marker, because the user hasn't selected a place.
-            mMap?.addMarker(MarkerOptions()
-                .title(getString(R.string.default_info_title))
-                .position(defaultLocation)
-                .snippet(getString(R.string.default_info_snippet)))
+            mMap.addMarker(
+                MarkerOptions()
+                    .title(getString(R.string.default_info_title))
+                    .position(defaultLocation)
+                    .snippet(getString(R.string.default_info_snippet))
+            )
 
             // Prompt the user for permission.
             getLocationPermission()
@@ -422,31 +357,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
 
     private fun openPlacesDialog() {
         // Ask the user to choose the place where they are now.
-        val listener = DialogInterface.OnClickListener { dialog, which -> // The "which" argument contains the position of the selected item.
-            val markerLatLng = likelyPlaceLatLngs[which]
-            var markerSnippet = likelyPlaceAddresses[which]
-            if (likelyPlaceAttributions[which] != null) {
-                markerSnippet = """
+        val listener =
+            DialogInterface.OnClickListener { dialog, which -> // The "which" argument contains the position of the selected item.
+                val markerLatLng = likelyPlaceLatLngs[which]
+                var markerSnippet = likelyPlaceAddresses[which]
+                if (likelyPlaceAttributions[which] != null) {
+                    markerSnippet = """
                 $markerSnippet
                 ${likelyPlaceAttributions[which]}
                 """.trimIndent()
+                }
+
+                if (markerLatLng == null) {
+                    return@OnClickListener
+                }
+
+                // Add a marker for the selected place, with an info window
+                // showing information about that place.
+                mMap.addMarker(
+                    MarkerOptions()
+                        .title(likelyPlaceNames[which])
+                        .position(markerLatLng)
+                        .snippet(markerSnippet)
+                )
+
+                // Position the map's camera at the location of the marker.
+                mMap.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(
+                        markerLatLng,
+                        DEFAULT_ZOOM.toFloat()
+                    )
+                )
             }
-
-            if (markerLatLng == null) {
-                return@OnClickListener
-            }
-
-            // Add a marker for the selected place, with an info window
-            // showing information about that place.
-            mMap?.addMarker(MarkerOptions()
-                .title(likelyPlaceNames[which])
-                .position(markerLatLng)
-                .snippet(markerSnippet))
-
-            // Position the map's camera at the location of the marker.
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                DEFAULT_ZOOM.toFloat()))
-        }
 
         // Display the dialog.
         AlertDialog.Builder(this)
@@ -459,20 +401,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback{
     //Show all nearby places on map
     private fun showAllPlaces() {
         var i = 0
-        while (i < M_MAX_ENTRIES){
+        while (i < M_MAX_ENTRIES) {
             val markerLatLng = likelyPlaceLatLngs[i]
             val markerSnippet = likelyPlaceAddresses[i]
 
-            mMap?.addMarker(MarkerOptions()
-                .title(likelyPlaceNames[i])
-                .position(markerLatLng!!)
-                .snippet(markerSnippet)
+            mMap.addMarker(
+                MarkerOptions()
+                    .title(likelyPlaceNames[i])
+                    .position(markerLatLng!!)
+                    .snippet(markerSnippet)
             )
             i++
         }
     }
-
-
 
 
 }
