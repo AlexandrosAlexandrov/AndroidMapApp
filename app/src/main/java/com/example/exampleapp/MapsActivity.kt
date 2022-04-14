@@ -403,13 +403,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         var i = 0
         while (i < M_MAX_ENTRIES) {
             val markerLatLng = likelyPlaceLatLngs[i]
-            val markerSnippet = likelyPlaceAddresses[i]
+            //val markerSnippet = likelyPlaceAddresses[i]
 
             mMap.addMarker(
                 MarkerOptions()
+                    //for some reason title isn't showing so I am putting the title in the snippet
                     .title(likelyPlaceNames[i])
                     .position(markerLatLng!!)
-                    .snippet(markerSnippet)
+                    .snippet(likelyPlaceNames[i])
             )
             i++
         }
